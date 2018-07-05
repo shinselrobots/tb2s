@@ -1,0 +1,36 @@
+<launch>
+  <!-- This launch script starts the physical robot, including its model, 
+  base, servos, and basic base safety controller.  With minimal you can
+  remote control the rebot using a joystick, but the robot does not have
+  any higher level functionality or processing -->
+  <include file="$(find tb2s)/launch/include/kobuki_base.launch"/>
+  <include file="$(find tb2s_description)/launch/description.launch"/>
+  <include file="$(find tb2s_pantilt)/launch/pantilt.launch"/>
+
+  <!-- Text to speech (robot voice) and sound effects services -->
+  <rosparam file="$(find tb2s)/config/jokes.yaml" command="load"/>
+  <include file="$(find robot_sounds)/launch/robot_sounds.launch"/>
+
+  <!-- These launch scripts starts the behavior plugin loader, which will
+  scan the system for all available behavior C++ and Python plugins.  This includes
+  a simply python script which maps buttons to several hard coded behaviors. -->
+  <node pkg="tb2s_joybuttons" type="joy_buttons.py" name="joy_buttons"/>
+  <include file="$(find behavior_common)/launch/behavior_common.launch"/> 
+
+  <!-- This launch script starts the RealSense camera and any desired middleware nodes. -->
+  <include file="$(find tb2s)/launch/include/realsense.launch"/>
+
+  <!-- This launch script starts the Lidar. -->
+  <include file="$(find tb2s)/launch/include/lidar.launch"/> 
+
+  <!-- This launch script starts speech recognition. DISABLED: 
+  <include file="$(find tb2s)/launch/include/speech_recognition.launch"/>  
+  -->
+
+  <!-- This launch script starts navigation capabilities DISABLED:
+  <include file="$(find tb2s_navigation)/launch/navigation.launch" />
+  -->
+
+
+
+</launch>

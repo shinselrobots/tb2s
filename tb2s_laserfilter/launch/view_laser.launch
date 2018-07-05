@@ -1,0 +1,5 @@
+<!-- View a running laser.  Assuemes tb2s robot is already running -->  
+
+<launch>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tb2s_laserfilter)/rviz/tb2s_laserfilter.rviz" />
+</launch>

@@ -1,0 +1,72 @@
+<launch>
+  <!-- 
+  <arg name="urdf_file" default="$(find xacro)/xacro.py '$(find kobuki_description)/urdf/kobuki_standalone.urdf.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+  -->
+  
+  <node pkg="nodelet" type="nodelet" name="mobile_base_nodelet_manager" args="manager"/>
+
+
+  <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
+    <rosparam command="load" file="$(find kobuki_node)/param/diagnostics.yaml" />
+  </node>
+
+  <!--
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>
+  -->
+  
+  
+  <!-- (Input #1, stage 1) This is the Joystick input, which publishes a generic /joy Joystick topic.  
+       It is received by the tb2s_teleop_joy node below -->
+  <node pkg="joy" type="joy_node" name="joystick"/>
+
+  <!-- (Input #1, stage 2) This is the Joystick teleop node, which converts Joystick messages to Twist messages.
+       It is received by the velocity smoother node below -->
+  <node pkg="tb2s_teleop" type="turtlebot_teleop_joy" name="turtlebot_teleop_joystick">
+    <param name="scale_angular" value="1.5"/>
+    <param name="scale_linear" value="0.5"/>
+    <remap from="turtlebot_teleop_joystick/cmd_vel" to="cmd_vel_mux/input/teleop"/>
+  </node>
+   
+  <!-- (Input #2) This is the kobuki safety controller.  (back up if bumper is hit) 
+       It is received by the velocity multiplexor below -->
+  <node pkg="nodelet" type="nodelet" name="kobuki_safety_controller"
+        args="load kobuki_safety_controller/SafetyControllerNodelet mobile_base_nodelet_manager">
+    <remap from="kobuki_safety_controller/cmd_vel"                  to="cmd_vel_mux/safety_controller"/>
+    <remap from="kobuki_safety_controller/events/bumper"            to="mobile_base/events/bumper"/>
+    <remap from="kobuki_safety_controller/events/cliff"             to="mobile_base/events/cliff"/>
+    <remap from="kobuki_safety_controller/events/wheel_drop"        to="mobile_base/events/wheel_drop"/>
+  </node>
+
+  <!-- (Velocity Multiplexor) This is the master velocity multiplexor, which accepts input requests from a variety of sources,
+       and priorities the correct input based on a static priority configuration file.  By default
+       the kobuki safety controller has highest priority.
+       The output of this node is received by the kobuki base -->
+  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="load yocs_cmd_vel_mux/CmdVelMuxNodelet mobile_base_nodelet_manager">
+    <param name="yaml_cfg_file" value="$(find tb2s)/param/cmd_vel_mux.yaml"/>
+    <remap from="cmd_vel_mux/output/cmd_vel" to="teleop_velocity_smoother/raw_cmd_vel"/>
+  </node>
+
+  <!-- This is the generic teleop smoother node, which adjusts the Twist messages based on the Kobuki node's
+       current speed and velocity. 
+       It is received by the velocity multiplexor above -->
+  <node pkg="nodelet" type="nodelet" name="teleop_velocity_smoother" args="load yocs_velocity_smoother/VelocitySmootherNodelet mobile_base_nodelet_manager">
+    <rosparam file="$(find tb2s_teleop)/param/defaults/smoother.yaml" command="load"/>
+    <remap from="teleop_velocity_smoother/smooth_cmd_vel" to="mobile_base/commands/velocity"/>
+
+    <!-- Robot velocity feedbacks; use the one configured as base default -->
+    <remap from="teleop_velocity_smoother/odometry" to="odom"/>
+    <remap from="teleop_velocity_smoother/robot_cmd_vel" to="mobile_base/commands/velocity"/>
+  </node>
+  
+  <!-- (Kobuki Base)  This is the master controller for the Kobuki base, which receives motion commands from /mobile_base/commands/velocity -->
+  <node pkg="nodelet" type="nodelet" name="mobile_base" args="load kobuki_node/KobukiNodelet mobile_base_nodelet_manager">
+    <rosparam file="$(find kobuki_node)/param/base.yaml" command="load"/>
+    <remap from="mobile_base/odom" to="odom"/>
+    <remap from="mobile_base/enable" to="enable"/>
+    <remap from="mobile_base/disable" to="disable"/>
+    <remap from="mobile_base/joint_states" to="joint_states"/>
+  </node>
+</launch>

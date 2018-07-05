@@ -1,0 +1,5 @@
+<library path="lib/libraw_move_behavior">
+  <class name="behavior_plugin/RawMoveBehaviorPlugin" type="behavior_plugin::RawMoveBehaviorPlugin" base_class_type="behavior_common::BehaviorPlugin">
+    <description>Raw Move Behavior plugin</description>
+  </class>
+</library>

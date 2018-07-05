@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- from Care-O-Bot: cob_collision_velocity_filter  -->
+
+<launch>
+  <node pkg="my_collision_velocity_filter" type="collision_velocity_filter" output="screen" name="collision_velocity_filter">
+    <rosparam command="load" file="$(find tb2s_navigation)/param/my_collision_params.yaml" />
+
+    <remap from="command_in" to="cmd_vel_mux/tb2s_navigation"/>
+
+   </node>
+
+</launch>

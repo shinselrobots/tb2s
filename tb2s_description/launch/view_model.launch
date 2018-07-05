@@ -1,0 +1,11 @@
+<!-- View live model of running robot, to view robot pose, feedback from servos, sensors, etc.
+     This is the state that the robot thinks is is in.
+
+    requires robot to be launched first: roslaunch tb2s robot.launch
+-->
+
+<launch>
+    <arg name="gui" default="True" />
+    <param name="use_gui" value="$(arg gui)"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find tb2s_description)/rviz/view_model.rviz" required="true" />
+</launch>

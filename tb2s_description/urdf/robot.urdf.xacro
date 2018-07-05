@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<robot name="tb2s" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find kobuki_description)/urdf/kobuki.urdf.xacro" />
+  <xacro:include filename="$(find tb2s_description)/urdf/_hexagons.urdf.xacro"/>
+  <xacro:include filename="$(find realsense_ros_camera)/urdf/_zr300.urdf.xacro"/>
+  <xacro:include filename="$(find tb2s_description)/urdf/_zr300_stand.urdf.xacro"/>
+  <xacro:include filename="$(find tb2s_description)/urdf/_lplidar.urdf.xacro"/>
+  <xacro:include filename="$(find tb2s_description)/urdf/_astra_camera.urdf.xacro"/>
+
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+
+  <kobuki/>
+  <stack_hexagons parent="base_link"/>
+  <zr300_stand parent="base_link"/>
+
+  <sensor_zr300 parent="zr300_camera_plate_link">
+     <origin xyz="0 -0.017 0.005" rpy="${-M_PI/2} ${-M_PI/2} 0"/>
+  </sensor_zr300>
+
+  <sensor_lplidar parent = "plate_top_link">
+      <origin xyz="0.070 0.0 0.0" rpy="0.0 0.0 0.0" /> 
+  </sensor_lplidar>
+
+  <!-- 
+  <astra_camera name = "astra_camera" parent = "plate_top_link">
+      <origin xyz="0.070 0.0 0.0" rpy="0.0 -0.52 0.0" /> 
+  </astra_camera>
+
+  <astra_camera name = "d435_camera" parent = "zr300_camera_plate_link">
+  -->
+
+  <astra_camera name = "astra_camera" parent = "zr300_camera_plate_link">
+      <origin xyz="0 -0.017 0.005" rpy="${-M_PI/2} ${-M_PI/2} 0"/>
+  </astra_camera>
+
+</robot>

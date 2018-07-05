@@ -1,0 +1,46 @@
+<launch>
+  <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+    <rosparam>
+      namespace: robot_dynamixel_manager
+      serial_ports:
+        dynamixel_port:
+            port_name: "/dev/dynamixel"
+            baud_rate: 57600
+            min_motor_id: 1
+            max_motor_id: 5
+            update_rate: 10 
+    </rosparam>
+  </node>
+ 
+  <!-- Start joint controller -->  
+  <rosparam file="$(find tb2s_pantilt)/config/dynamixel_params.yaml" command="load"/>
+
+  <node name="dynamixel_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+        args="--manager=robot_dynamixel_manager
+              --port=dynamixel_port
+
+          head_pan_controller
+          head_tilt_controller
+        "
+        output="screen" />
+
+  <!-- Start joint trajectory controller -->
+    <rosparam file="$(find tb2s_pantilt)/config/joints_trajectory_controller.yaml" command="load"/>
+    <node name="controller_spawner_meta" pkg="dynamixel_controllers" type="controller_spawner.py"
+        args="--manager=robot_dynamixel_manager
+                --type=meta
+
+          head_controller
+            head_pan_controller
+            head_tilt_controller
+        "
+        output="screen"/>
+
+
+   <node name="dynamixel_joint_states_publisher" pkg="tb2s_pantilt" type="dynamixel_joint_state_publisher.py" output="screen" />
+
+   <!--  <node name="relax_all_servos" pkg="tb2s_pantilt" type="relax_all_servos.py" output="screen"/>  -->
+
+   <node name="joy_to_dynamixel" pkg="tb2s_pantilt" type="joy_to_dynamixel.py"/>
+</launch>
+

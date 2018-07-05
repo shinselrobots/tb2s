@@ -1,2 +1,4 @@
-# tb2s
-Turtlebot 2 smart, based upon TB2 hardware, with some TB2 code reuse, but adding capabilities
+# tb2s 
+
+See https://github.com/shinselrobots/tb2s_setup for setup information for this robot
+ 

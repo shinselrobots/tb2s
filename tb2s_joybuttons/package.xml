@@ -1,0 +1,10 @@
+<package>
+  <name>tb2s_joybuttons</name>
+  <version>0.0.0</version>
+  <description>Robot joystick button support for the tb2s robot</description>
+  <maintainer email="matt@tecnovelty.com">Matt Curfman</maintainer>
+  <license>Apache-2</license>
+  <author>Matt Curfman</author>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>joy</run_depend>
+</package>

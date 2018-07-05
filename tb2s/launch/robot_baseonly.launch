@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find kobuki_utils)/launch/kobuki_base.launch"/>
+  <include file="$(find tb2s_description)/launch/description.launch"/>
+</launch>

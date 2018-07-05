@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<!--
+  Hexagon stacks
+ -->
+<robot name="zr300_stand" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find tb2s_description)/urdf/_common.urdf.xacro"/>
+  <xacro:include filename="$(find tb2s_description)/urdf/_pan_tilt.urdf.xacro"/>
+
+  
+  <!-- Xacro properties -->
+  <xacro:property name="M_SCALE" value="0.001"/>
+  
+  <!-- Xacro macros -->
+  <xacro:macro name="stand_pole" params="parent number x_loc y_loc z_loc">  
+    <joint name="stand_pole_${number}_joint" type="fixed">
+      <origin xyz="${x_loc} ${y_loc} ${z_loc}" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="stand_pole_${number}_link"/>
+    </joint>
+    <link name="stand_pole_${number}_link">
+      <visual>
+        <origin xyz=" 0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://tb2s_description/meshes/hexagons/pole_top.dae"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.2032" radius="0.006"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.060"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.000206991" ixy="0.0" ixz="0.0"
+                 iyy="0.000206991" iyz="0.0"
+                 izz="0.000001080"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <!-- 
+    Stack macro - all the components relative transforms are made with respect 
+    to the parent link (usually base_link). They could be made relative to each
+    other, but there is no necessary reason to do so.
+  -->
+  <xacro:macro name="zr300_stand" params="parent">    
+    <stand_pole parent="${parent}" number="0" x_loc="-0.0940" y_loc= "0.0370" z_loc="0.5020"/>
+    <stand_pole parent="${parent}" number="1" x_loc="-0.0155" y_loc= "0.0370" z_loc="0.5020"/>
+    <stand_pole parent="${parent}" number="2" x_loc="-0.0940" y_loc= "-0.0370" z_loc="0.5020"/>
+    <stand_pole parent="${parent}" number="3" x_loc="-0.0155" y_loc= "-0.0370" z_loc="0.5020"/>
+    
+    <joint name="zr300_stand_plate_joint" type="fixed">
+      <origin xyz="-0.092 -0.040 0.6025" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="zr300_stand_plate_link"/>
+    </joint>  
+
+    <link name="zr300_stand_plate_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://tb2s_description/meshes/zr300/zr300_servo_mount-binary.stl" scale="0.001 0.001 0.001"/>
+           <!-- <box size="0.1 0.1 .005"/> -->
+        </geometry>
+        <xacro:insert_block name="material_dark_grey" />
+      </visual>  
+      <collision>
+        <origin xyz="0.01364 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.006" radius="0.170"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.520"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.003328" ixy="0.0" ixz="0.0"
+                 iyy="0.003328" iyz="0.0"
+                 izz="0.006656" />
+      </inertial>
+    </link>
+
+     <!-- head pan -->
+    <dynamixel_ax12_fixed parent="zr300_stand_plate" name="head_pan_servo">
+       <origin xyz="0.05 0.04 0.015" rpy="${PI/2} 0 ${PI/2}"/>
+    </dynamixel_ax12_fixed>
+    
+    <bioloid_F3_head_revolute parent="head_pan_servo" name="head_pan_bracket" joint_name="head_pan" llimit="-${PI/2}" ulimit="${PI/2}" vlimit="1.571" color="blue">
+       <origin xyz="0 ${AX12_WIDTH/2 + 0.005} 0" rpy="${-PI/2} ${PI/2} ${PI}" />
+       <axis xyz="0 0 -1" />
+    </bioloid_F3_head_revolute>
+      
+    <dynamixel_ax12_fixed parent="head_pan_bracket" name="head_tilt_servo">
+       <origin xyz="-0.025 0 -0.020" rpy="0 ${-PI/2} 0"/>
+    </dynamixel_ax12_fixed>
+
+    <bioloid_F2_head_revolute parent="head_tilt_servo" name="head_tilt_bracket" joint_name="head_tilt" llimit="-1.0" ulimit="1.0" vlimit="1.571" color="blue" >
+       <origin xyz="0 0 0" rpy="${PI} ${PI} 0" />
+       <axis xyz="0 -1 0" />
+    </bioloid_F2_head_revolute>
+
+    <joint name="zr300_camera_plate_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.03" rpy="0 0 ${-PI/2}"/>
+      <parent link="head_tilt_bracket_link"/>
+      <child link="zr300_camera_plate_link"/>
+    </joint>  
+
+    <link name="zr300_camera_plate_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://tb2s_description/meshes/zr300/zr300_servo_bracket-binary.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <xacro:insert_block name="material_dark_grey" />
+      </visual>  
+      <collision>
+        <origin xyz="0.01364 0 0" rpy="0 0 0"/>
+        <geometry>
+          <cylinder length="0.006" radius="0.170"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.520"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.003328" ixy="0.0" ixz="0.0"
+                 iyy="0.003328" iyz="0.0"
+                 izz="0.006656" />
+      </inertial>
+    </link>
+
+    <!--
+    <dynamixel_AX12_fixed parent="head_tilt_bracket" name="head_tilt_servo">
+       <origin xyz="0 0 0.065" rpy="${PI} ${PI} ${PI/2}"/>
+    </dynamixel_AX12_fixed>
+    
+    <bioloid_F2_head_revolute parent="head_tilt_servo" name="head_tilt_bracket" joint_name="head_tilt" llimit="-0.75" ulimit="0.75" vlimit="1.571" color="blue" >
+       <origin xyz="0 0 0" rpy="0 0 0" />
+       <axis xyz="0 1 0" />
+    </bioloid_F2_head_revolute>
+ -->
+
+  </xacro:macro>
+</robot>

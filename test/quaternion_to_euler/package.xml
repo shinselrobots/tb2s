@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>quaternion_to_euler</name>
+  <version>0.0.0</version>
+  <description>The quaternion_to_euler package</description>
+
+  <maintainer email="matt@tecnovelty.com">Matt Curfman</maintainer>
+  <license>Apache-2</license>
+  <author>Matt Curfman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>angles</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>angles</run_depend>
+</package>

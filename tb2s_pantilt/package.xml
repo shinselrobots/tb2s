@@ -1,0 +1,10 @@
+<package>
+  <name>tb2s_pantilt</name>
+  <version>0.0.0</version>
+  <description>Robot pan/tilt controller</description>
+  <maintainer email="matt@tecnovelty.com">Matt Curfman</maintainer>
+  <license>Apache-2</license>
+  <author>Matt Curfman</author>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>dynamixel_controllers</run_depend>
+</package>

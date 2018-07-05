@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package>
+  <name>tb2s_laserfilter</name>
+  <version>0.0.0</version>
+  <description>Launch files for the tb2s Robot Laser Scan Filter</description>
+  <maintainer email="shinselrobots@gmail.com">Dave Shinsel</maintainer>
+  <license>Apache-2</license>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>laser_filters</run_depend>
+</package>

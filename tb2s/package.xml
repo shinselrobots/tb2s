@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>tb2s</name>
+  <version>0.0.0</version>
+  <description>Launch files for the tb2s Robot</description>
+  <maintainer email="matt@tecnovelty.com">Matt Curfman</maintainer>
+  <license>Apache-2</license>
+  <author>Matt Curfman</author>
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>depthimage_to_laserscan</run_depend>
+  <run_depend>joy</run_depend>
+  <run_depend>kobuki_ftdi</run_depend>
+  <run_depend>kobuki_description</run_depend>
+  <run_depend>kobuki_node</run_depend>
+</package>
